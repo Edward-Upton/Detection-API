@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Charities Day</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" media="screen" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+</head>
+
+<body>
+
+    <div id="container">
+
+        <h1><a href="//webrtc.github.io/samples/" title="WebRTC samples homepage">WebRTC samples</a> <span>getUserMedia
+                ⇒ canvas</span>
+        </h1>
+
+        <video id="preview" playsinline autoplay></video>
+        <button id="capture">Take snapshot</button>
+        <textarea id="image_data" rows="2" cols="20" name="usrtxt" wrap="hard"></textarea>
+        <canvas id="canvas"></canvas>
+
+        <p>Draw a frame from the video onto the canvas element using the <code>drawImage()</code> method.</p>
+
+        <p>The variables <code>canvas</code>, <code>video</code> and <code>stream</code> are in global scope, so you
+            can
+            inspect them from the console.</p>
+
+        <a href="https://github.com/webrtc/samples/tree/gh-pages/src/content/getusermedia/canvas" title="View source for this page on GitHub"
+            id="viewSource">View source on GitHub</a>
+
+    </div>
+
+    <script>
+        const video = document.getElementById('preview');
+        const canvas = document.getElementById('canvas');
+        const imageData = document.getElementById('image_data')
+        canvas.width = 480;
+        canvas.height = 360;
+
+        const button = document.getElementById('capture');
+        button.onclick = function () {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            imageData.innerHTML = canvas.toDataURL("image/jpeg");
+        };
+
+        const constraints = {
+            audio: false,
+            video: true
+        };
+
+        function handleSuccess(stream) {
+            window.stream = stream; // make stream available to browser console
+            video.srcObject = stream;
+        }
+
+        function handleError(error) {
+            console.log('navigator.getUserMedia error: ', error);
+        }
+
+        navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+
+    </script>
+
+</body>
+
+</html>
