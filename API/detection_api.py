@@ -27,8 +27,14 @@ CWD = os.path.dirname(os.path.realpath(__file__))
 def homePage():
     return flask.render_template("home_page.html")
 
+@APP.route('/detect', methods=['GET', 'POST'])
+def detect():
+    imageBS64 = str(request.form["image_data"])
+    print(imageBS64)
+    return flask.render_template("detection.html", imageBS64=imageBS64)
+    
 if __name__ == "__main__":
     try:
-        APP.run(host="0.0.0.0", port=403, debug=DEBUG, ssl_context='adhoc')
+        APP.run(host="0.0.0.0", port=80, debug=DEBUG, ssl_context='adhoc')
     finally:
         conn.close()
