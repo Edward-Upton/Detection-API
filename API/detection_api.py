@@ -1,11 +1,18 @@
 import flask
-from numpy import random
+import re
+import numpy as np 
 #from flaskext.mysql import MySQL
 from flask import request, make_response
-import random
 import string
 import json
 import os
+#import object_detection_runner
+from PIL import Image
+import cv2
+import codecs
+from datauri import DataURI
+from io import BytesIO, StringIO
+import base64
 from flaskext.mysql import MySQL
 
 DEBUG = True
@@ -29,9 +36,22 @@ def homePage():
 
 @APP.route('/detect', methods=['GET', 'POST'])
 def detect():
-    imageBS64 = str(request.form["image_data"])
-    print(imageBS64)
-    return flask.render_template("detection.html", imageBS64=imageBS64)
+
+    image_b64 = request.values['imageBase64']
+    image_data = re.sub('^data:image/.+;base64,', '', image_b64).decode('base64')
+    image_PIL = Image.open(StringIO(image_b64))
+    image_np = np.array(image_PIL)
+
+    image_PIL.show()
+
+    #open_cv_image = np.array(image.convert('RGB'))
+
+    #pil_img = Image.fromarray(open_cv_image) 
+
+    #parts_dict = object_detection_runner.detect_objects(image_PIL)
+
+
+    #return str(parts_dict)
     
 if __name__ == "__main__":
     try:

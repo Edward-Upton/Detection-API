@@ -23,21 +23,21 @@
 <body>
 
     <div class="container-fluid" id="container">
+        <div>
+            <h1>Brick Identifier</h1>
+        </div>
 
         <video id="preview" width="75%" class="center" playsinline autoplay></video>
-        <button id="capture">Take snapshot</button>
         <div class="select">
             <label for="videoSource">Select Camera: </label><select id="videoSource"></select>
         </div>
-        <form action="/detect" method="POST">
-            <div>
-                <input hidden type="text" id="image_data" name="image_data">
-            </div>
-            <div>
-                <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Sumbit Picture For Detection</button>
-            </div>
-        </form>
-        <canvas id="canvas"></canvas>
+        <div>
+            <canvas id="canvas"></canvas>
+        </div>
+        <div>
+            <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Submit Picture
+                For Detection</button>
+        </div>
 
     </div>
 
@@ -47,15 +47,24 @@
         const video = document.getElementById('preview');
         const canvas = document.getElementById('canvas');
         const imageData = document.getElementById('image_data')
-        canvas.width = 480;
-        canvas.height = 360;
+        const formSubmit = document.getElementById('photoSubmitForm')
+        formSubmit.action = "/detect";
 
-        const button = document.getElementById('capture');
+        const button = document.getElementById('submit_picture_button');
         button.onclick = function () {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            imageData.value = canvas.toDataURL("image/png");
+            var scratchCanvas = document.createElement('canvas');
+            var context = scratchCanvas.getContext('2d');
+            context.putImageData(video);
+            var dataURL = scratchCanvas.toDataURL();
+            $.ajax({
+                type: "POST",
+                url: "/detect",
+                data: {
+                    imageBase64: dataURL
+                }
+            }).done(function () {
+                console.log('sent');
+            });
         };
 
         function gotDevices(deviceInfos) {
