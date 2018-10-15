@@ -1,6 +1,6 @@
 import flask
 import re
-import numpy as np 
+import numpy as np
 #from flaskext.mysql import MySQL
 from flask import request, make_response
 import string
@@ -10,10 +10,10 @@ import os
 from PIL import Image
 import cv2
 import codecs
-from datauri import DataURI
 from io import BytesIO, StringIO
 import base64
 from flaskext.mysql import MySQL
+from binascii import a2b_base64
 
 DEBUG = True
 APP = flask.Flask(__name__)
@@ -30,29 +30,39 @@ conn = mysql.connect()
 
 CWD = os.path.dirname(os.path.realpath(__file__))
 
+
 @APP.route('/', methods=['GET', 'POST'])
 def homePage():
     return flask.render_template("home_page.html")
 
+
 @APP.route('/detect', methods=['GET', 'POST'])
 def detect():
+    requestData = request.json
+    image_data = requestData["imageBase64"]
+    content = image_data.split(';')[1]
+    image_encoded = content.split(',')[1]
+    body = base64.decodebytes(image_encoded.encode('utf-8'))
+    image_PIL = Image.open(BytesIO(body))
+    with open("image.png", "wb") as fp:
+        fp.write(body)
+    image_np = np.array(image_PIL.convert('RGB'))
 
-    image_b64 = request.values['imageBase64']
-    image_data = re.sub('^data:image/.+;base64,', '', image_b64).decode('base64')
-    image_PIL = Image.open(StringIO(image_b64))
-    image_np = np.array(image_PIL)
+    open_cv_image = np.array(image_np)
+    # cv2.imshow('image',cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB))
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
-    image_PIL.show()
+    image_PIL = Image.fromarray(open_cv_image)
 
-    #open_cv_image = np.array(image.convert('RGB'))
-
-    #pil_img = Image.fromarray(open_cv_image) 
+    (im_width, im_height) = image_PIL.size
+    print(np.array(image_PIL.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8))
 
     #parts_dict = object_detection_runner.detect_objects(image_PIL)
 
+    return "Success"
 
-    #return str(parts_dict)
-    
+
 if __name__ == "__main__":
     try:
         APP.run(host="0.0.0.0", port=80, debug=DEBUG, ssl_context='adhoc')

@@ -18,6 +18,8 @@
     <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
 </head>
 
 <body>
@@ -35,113 +37,109 @@
             <canvas id="canvas"></canvas>
         </div>
         <div>
-            <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Submit Picture
-                For Detection</button>
+            <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Take Photo</button>
         </div>
 
     </div>
 
-    <script>
-        var videoSelect = document.querySelector("select#videoSource");
-        var selectors = [videoSelect];
-        const video = document.getElementById('preview');
-        const canvas = document.getElementById('canvas');
-        const imageData = document.getElementById('image_data')
-        const formSubmit = document.getElementById('photoSubmitForm')
-        formSubmit.action = "/detect";
+    <script>$(document).ready(function () {
+            var videoSelect = document.querySelector("select#videoSource");
+            var selectors = [videoSelect];
+            const video = document.getElementById('preview');
+            const canvas = document.getElementById('canvas');
 
-        const button = document.getElementById('submit_picture_button');
-        button.onclick = function () {
-            var scratchCanvas = document.createElement('canvas');
-            var context = scratchCanvas.getContext('2d');
-            context.putImageData(video);
-            var dataURL = scratchCanvas.toDataURL();
-            $.ajax({
-                type: "POST",
-                url: "/detect",
-                data: {
-                    imageBase64: dataURL
-                }
-            }).done(function () {
-                console.log('sent');
-            });
-        };
+            var button = document.getElementById('submit_picture_button');
+            button.onclick = function () {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0)
+                var imageData = canvas.toDataURL('type/jpeg')
+                var form = document.getElementById('myForm');
+                var formData = new FormData();
+                formData.append("imageData", imageData);
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "/detect");
+                xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xmlhttp.send(JSON.stringify({imageBase64:imageData}));
+            }
 
-        function gotDevices(deviceInfos) {
-            // Handles being called several times to update labels. Preserve values.
-            var values = selectors.map(function (select) {
-                return select.value;
-            });
-            selectors.forEach(function (select) {
-                while (select.firstChild) {
-                    select.removeChild(select.firstChild);
-                }
-            });
 
-            for (var i = 0; i !== deviceInfos.length; ++i) {
-                var deviceInfo = deviceInfos[i];
-                var option = document.createElement("option");
-                option.value = deviceInfo.deviceId;
 
-                if (deviceInfo.kind === "videoinput") {
-                    option.text = deviceInfo.label || "camera " + (videoSelect.length + 1);
-                    videoSelect.appendChild(option);
-                } else {
-                    console.log("Some other kind of source/device: ", deviceInfo);
-                }
-
-                selectors.forEach(function (select, selectorIndex) {
-                    if (
-                        Array.prototype.slice.call(select.childNodes).some(function (n) {
-                            return n.value === values[selectorIndex];
-                        })
-                    ) {
-                        select.value = values[selectorIndex];
+            function gotDevices(deviceInfos) {
+                // Handles being called several times to update labels. Preserve values.
+                var values = selectors.map(function (select) {
+                    return select.value;
+                });
+                selectors.forEach(function (select) {
+                    while (select.firstChild) {
+                        select.removeChild(select.firstChild);
                     }
                 });
-            }
-        }
 
-        navigator.mediaDevices
-            .enumerateDevices()
-            .then(gotDevices)
-            .catch(handleError);
+                for (var i = 0; i !== deviceInfos.length; ++i) {
+                    var deviceInfo = deviceInfos[i];
+                    var option = document.createElement("option");
+                    option.value = deviceInfo.deviceId;
 
-        function gotStream(stream) {
-            // arToolkitSource.domElement.srcObject = stream; // make stream available to console
-            video.srcObject = stream;
-            // Refresh button list in case labels have become available
-            return navigator.mediaDevices.enumerateDevices();
-        }
+                    if (deviceInfo.kind === "videoinput") {
+                        option.text = deviceInfo.label || "camera " + (videoSelect.length + 1);
+                        videoSelect.appendChild(option);
+                    } else {
+                        console.log("Some other kind of source/device: ", deviceInfo);
+                    }
 
-        function start() {
-            if (window.stream) {
-                window.stream.getTracks().forEach(function (track) {
-                    track.stop();
-                });
-            }
-            var videoSource = videoSelect.value;
-            var constraints = {
-                video: {
-                    deviceId: videoSource ? { exact: videoSource } : undefined
+                    selectors.forEach(function (select, selectorIndex) {
+                        if (
+                            Array.prototype.slice.call(select.childNodes).some(function (n) {
+                                return n.value === values[selectorIndex];
+                            })
+                        ) {
+                            select.value = values[selectorIndex];
+                        }
+                    });
                 }
-            };
+            }
+
             navigator.mediaDevices
-                .getUserMedia(constraints)
-                .then(gotStream)
+                .enumerateDevices()
                 .then(gotDevices)
                 .catch(handleError);
-        }
 
-        videoSelect.onchange = start;
+            function gotStream(stream) {
+                // arToolkitSource.domElement.srcObject = stream; // make stream available to console
+                video.srcObject = stream;
+                // Refresh button list in case labels have become available
+                return navigator.mediaDevices.enumerateDevices();
+            }
 
-        function handleError(error) {
-            console.log("navigator.getUserMedia error: ", error);
-        }
+            function start() {
+                if (window.stream) {
+                    window.stream.getTracks().forEach(function (track) {
+                        track.stop();
+                    });
+                }
+                var videoSource = videoSelect.value;
+                var constraints = {
+                    video: {
+                        deviceId: videoSource ? { exact: videoSource } : undefined
+                    }
+                };
+                navigator.mediaDevices
+                    .getUserMedia(constraints)
+                    .then(gotStream)
+                    .then(gotDevices)
+                    .catch(handleError);
+            }
 
-        start();
+            videoSelect.onchange = start;
 
-    </script>
+            function handleError(error) {
+                console.log("navigator.getUserMedia error: ", error);
+            }
+
+            start();
+        })</script>
 
 </body>
 
