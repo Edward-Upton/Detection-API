@@ -34,11 +34,15 @@
             <label for="videoSource">Select Camera: </label><select id="videoSource"></select>
         </div>
         <div>
+            <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Take Photo</button>
             <canvas id="canvas"></canvas>
         </div>
-        <div>
-            <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Take Photo</button>
-        </div>
+        <form method="POST" action="/detect">
+            <div>
+                <input id="imageBase64" name="imageBase64">
+                <button type="sumbit">Submit Picture for Detection</button>
+            </div>
+        </form>
 
     </div>
 
@@ -47,22 +51,20 @@
             var selectors = [videoSelect];
             const video = document.getElementById('preview');
             const canvas = document.getElementById('canvas');
+            var imageDataInput = document.getElementById('imageBase64')
 
             var button = document.getElementById('submit_picture_button');
             button.onclick = function () {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
+                canvas.width = (video.videoWidth);
+                canvas.height = (video.videoHeight);
                 var context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0)
-                var imageData = canvas.toDataURL('type/jpeg')
-                var form = document.getElementById('myForm');
-                var formData = new FormData();
-                formData.append("imageData", imageData);
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("POST", "/detect");
-                xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-                xmlhttp.send(JSON.stringify({imageBase64:imageData}));
+                context.scale(0.5, 0.5)
+                context.drawImage(video, 0, 0);
+                var imageData = canvas.toDataURL('type/png');
+                console.log(imageData)
+                imageDataInput.value = imageData;
             }
+
 
 
 

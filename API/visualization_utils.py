@@ -391,7 +391,12 @@ def visualize_boxes_and_labels_on_image_array(image,
               int(100*scores[i]))
           #THIS IS WHAT I CHANGED
           ymin, xmin, ymax, xmax = box
-          name_id_dict[class_name]=[int(100*scores[i]), ymin, xmin, ymax, xmax]
+          part_dict = dict()
+          part_dict["name"] = class_name
+          part_dict["confidence"] = int(100*scores[i])
+          part_dict["coordinated"] = [ymin, xmin, ymax, xmax]
+          name_id_dict["brick" + str(i)]= part_dict
+          #name_id_dict[class_name]=[int(100*scores[i]), ymin, xmin, ymax, xmax]
         else:
           display_str = 'score: {}%'.format(int(100 * scores[i]))
         box_to_display_str_map[box].append(display_str)

@@ -20,8 +20,13 @@
 </head>
 
 <body>
-
-    <img src='{{ imageBS64 }}' width="50%">
-
+    <div>
+        <strong>The Brick is <i>{{ partID }}</i> with <i>{{ confidence }}</i> confidence.</strong>
+    </div>
+    <form method="POST" action="/">
+        <div>
+            <button type="submit">Click Once Done</button>
+        </div>
+    </form>
 </body>
 </html>

@@ -6,7 +6,7 @@ from flask import request, make_response
 import string
 import json
 import os
-#import object_detection_runner
+import object_detection_runner
 from PIL import Image
 import cv2
 import codecs
@@ -19,14 +19,14 @@ DEBUG = True
 APP = flask.Flask(__name__)
 APP.config.from_object(__name__)
 
-mysql = MySQL()
-APP.config['MYSQL_DATABASE_USER'] = 'pyuser'
-APP.config['MYSQL_DATABASE_PASSWORD'] = 'pyuser'
-APP.config['MYSQL_DATABASE_DB'] = 'charities_day'
-APP.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(APP)
+# mysql = MySQL()
+# APP.config['MYSQL_DATABASE_USER'] = 'pyuser'
+# APP.config['MYSQL_DATABASE_PASSWORD'] = 'pyuser'
+# APP.config['MYSQL_DATABASE_DB'] = 'charities_day'
+# APP.config['MYSQL_DATABASE_HOST'] = 'localhost'
+# mysql.init_app(APP)
 
-conn = mysql.connect()
+# conn = mysql.connect()
 
 CWD = os.path.dirname(os.path.realpath(__file__))
 
@@ -35,11 +35,14 @@ CWD = os.path.dirname(os.path.realpath(__file__))
 def homePage():
     return flask.render_template("home_page.html")
 
+@APP.route('/test', methods=['GET', 'POST'])
+def test():
+    return flask.render_template("test.html")
+
 
 @APP.route('/detect', methods=['GET', 'POST'])
 def detect():
-    requestData = request.json
-    image_data = requestData["imageBase64"]
+    image_data = request.form.get("imageBase64")
     content = image_data.split(';')[1]
     image_encoded = content.split(',')[1]
     body = base64.decodebytes(image_encoded.encode('utf-8'))
@@ -58,13 +61,14 @@ def detect():
     (im_width, im_height) = image_PIL.size
     print(np.array(image_PIL.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8))
 
-    #parts_dict = object_detection_runner.detect_objects(image_PIL)
-
-    return "Success"
-
+    parts_dict = object_detection_runner.detect_objects(image_PIL)
+    print(str(parts_dict))
+    response = make_response(flask.render_template("detection.html", partID=str(parts_dict["brick0"]["name"]), confidence=str(parts_dict["brick0"]["confidence"])))
+    return response
 
 if __name__ == "__main__":
     try:
         APP.run(host="0.0.0.0", port=80, debug=DEBUG, ssl_context='adhoc')
     finally:
-        conn.close()
+        #conn.close()
+        print("Done")
