@@ -11,137 +11,66 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Charities Day</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" media="screen" href="../static/css/bootstrap.min.css">
-    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="../static/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
-
-    <div class="container-fluid" id="container">
-        <div>
-            <h1>Brick Identifier</h1>
+    <div class="container-fluid rounded" style="background-color: rgb(244, 248, 255); padding: 10px; border-radius: 15px; margin-left: 2%; margin-right: 2%; width: 96%">
+        <div class="alert alert-primary" style="font-size: 150%; text-align: center; padding: 2.5px;">
+            <strong>Brick Identifier</strong>
+        </div>
+        <div id="getImgDiv"class="container-fluid rounded" style="text-align: center; padding-bottom: 2.5px">
+            <label class="btn btn-outline-primary btn-file">
+                Take or Get Picture of Brick<input id="imgInput" style="display: none;" type="file" onchange="previewFile()">
+            </label>
+        </div>
+        <div id="imgPreviewDiv" class="content container-fluid rounded" style="text-align: center; display: none; background-color: rgb(209, 209, 209); padding: 2.5px; margin-left: 2%; margin-right: 2%; width: 96%">
+            <img id="imgPreview" src="" style="max-width: 100%; max-height: 60%">
         </div>
 
-        <video id="preview" width="75%" class="center" playsinline autoplay></video>
-        <div class="select">
-            <label for="videoSource">Select Camera: </label><select id="videoSource"></select>
-        </div>
-        <div>
-            <button class="btn btn-outline-success btn-lg" type="submit" id="submit_picture_button">Take Photo</button>
-            <canvas id="canvas"></canvas>
-        </div>
         <form method="POST" action="/detect">
-            <div>
-                <input id="imageBase64" name="imageBase64">
-                <button type="sumbit">Submit Picture for Detection</button>
+            <div id="imgSubmitDiv" class="container-fluid rounded" style="display: none; text-align: center; padding: 2.5px;">
+                <textarea id="imageBase64" name="imageBase64" hidden></textarea>
+                <button class="btn btn-outline-success" type="sumbit">Submit Picture for Detection</button>
             </div>
-        </form>
+            <script>
+                function previewFile() {
+                    var preview = document.getElementById('imgPreview');
+                    var file = document.getElementById('imgInput').files[0];
+                    var reader = new FileReader();
+                    var imageDataInput = document.getElementById('imageBase64');
+                    var imgPreviewDiv = document.getElementById('imgPreviewDiv');
+                    var imgSubmitDiv = document.getElementById('imgSubmitDiv');
+                    var getImgDiv = document.getElementById('getImgDiv')
 
-    </div>
-
-    <script>$(document).ready(function () {
-            var videoSelect = document.querySelector("select#videoSource");
-            var selectors = [videoSelect];
-            const video = document.getElementById('preview');
-            const canvas = document.getElementById('canvas');
-            var imageDataInput = document.getElementById('imageBase64')
-
-            var button = document.getElementById('submit_picture_button');
-            button.onclick = function () {
-                canvas.width = (video.videoWidth);
-                canvas.height = (video.videoHeight);
-                var context = canvas.getContext('2d');
-                context.scale(0.5, 0.5)
-                context.drawImage(video, 0, 0);
-                var imageData = canvas.toDataURL('type/png');
-                console.log(imageData)
-                imageDataInput.value = imageData;
-            }
+                    reader.addEventListener("load", function () {
+                        var imageDataB64 = reader.result;
+                        preview.src = imageDataB64;
+                        imgPreviewDiv.style.display = "block";
+                        imageDataInput.value = String(imageDataB64);
+                        imgSubmitDiv.style.display = "block";
+                        getImgDiv.style.display = "none";
 
 
+                    }, false);
+
+                    if (file) {
+                        reader.readAsDataURL(file);
 
 
-            function gotDevices(deviceInfos) {
-                // Handles being called several times to update labels. Preserve values.
-                var values = selectors.map(function (select) {
-                    return select.value;
-                });
-                selectors.forEach(function (select) {
-                    while (select.firstChild) {
-                        select.removeChild(select.firstChild);
-                    }
-                });
-
-                for (var i = 0; i !== deviceInfos.length; ++i) {
-                    var deviceInfo = deviceInfos[i];
-                    var option = document.createElement("option");
-                    option.value = deviceInfo.deviceId;
-
-                    if (deviceInfo.kind === "videoinput") {
-                        option.text = deviceInfo.label || "camera " + (videoSelect.length + 1);
-                        videoSelect.appendChild(option);
                     } else {
-                        console.log("Some other kind of source/device: ", deviceInfo);
+                        preview.src = "";
                     }
-
-                    selectors.forEach(function (select, selectorIndex) {
-                        if (
-                            Array.prototype.slice.call(select.childNodes).some(function (n) {
-                                return n.value === values[selectorIndex];
-                            })
-                        ) {
-                            select.value = values[selectorIndex];
-                        }
-                    });
                 }
-            }
-
-            navigator.mediaDevices
-                .enumerateDevices()
-                .then(gotDevices)
-                .catch(handleError);
-
-            function gotStream(stream) {
-                // arToolkitSource.domElement.srcObject = stream; // make stream available to console
-                video.srcObject = stream;
-                // Refresh button list in case labels have become available
-                return navigator.mediaDevices.enumerateDevices();
-            }
-
-            function start() {
-                if (window.stream) {
-                    window.stream.getTracks().forEach(function (track) {
-                        track.stop();
-                    });
-                }
-                var videoSource = videoSelect.value;
-                var constraints = {
-                    video: {
-                        deviceId: videoSource ? { exact: videoSource } : undefined
-                    }
-                };
-                navigator.mediaDevices
-                    .getUserMedia(constraints)
-                    .then(gotStream)
-                    .then(gotDevices)
-                    .catch(handleError);
-            }
-
-            videoSelect.onchange = start;
-
-            function handleError(error) {
-                console.log("navigator.getUserMedia error: ", error);
-            }
-
-            start();
-        })</script>
+            </script>
+    </div>
 
 </body>
 

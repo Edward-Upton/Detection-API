@@ -24,17 +24,14 @@ import label_map_util
 
 from multiprocessing.dummy import Pool as ThreadPool
 
-MINIMUM_CONFIDENCE = 0.5
+MINIMUM_CONFIDENCE = 0.1
+IMAGE_RESOLUTION = [300,300]
 
-# Path to locations for the training images.
-PATH_TO_LABELS = 'C:/Users/edupt/Documents/GitHub/LEGO-ID-Project/annotations/label_map.pbtxt'
-PATH_TO_TEST_IMAGES_DIR = 'C:/Users/edupt/Documents/GitHub/LEGO-ID-Project/test_images'
-PATH_TO_OUTPUT_IMAGES = 'C:/Users/edupt/Documents/GitHub/LEGO-ID-Project/output/test_images/'
-PATH_TO_ALREADY_SCANNED = PATH_TO_TEST_IMAGES_DIR + '/AlreadyScanned'
+PATH_TO_MODEL_DIR = 'C:/Users/edupt/Documents/GitHub/Detection-API/API/models/ssd_inception_v2_coco/25017-05.11.18/output_inference_graph'
 
-# Path to the location of the model.
-MODEL_NAME = 'C:/Users/edupt/Documents/GitHub/LEGO-ID-Project/output_inference_graph'
-PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+PATH_TO_LABELS = os.path.join(PATH_TO_MODEL_DIR, 'label_map.pbtxt')
+
+PATH_TO_CKPT = os.path.join(PATH_TO_MODEL_DIR, 'frozen_inference_graph.pb') 
 
 detection_graph = tf.Graph()
 SESS = tf.Session(graph=detection_graph)
@@ -88,28 +85,3 @@ with detection_graph.as_default():
     detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
     detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
     num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-
-
-# app = Flask(__name__)
-# @app.route('/api/test', methods=['POST'])
-# def postImageHandler():
-#     print("Recieved request")
-#     r = request
-#     # convert string of image data to uint8
-#     nparr = np.fromstring(r.data, np.uint8)
-#     # decode image
-#     cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-#     cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
-
-#     pil_img = Image.fromarray(cv2_img)
-
-#     #pil_img = reducing_resolution(pil_img)
-
-#     name_id_dict = detect_objects(pil_img)
-
-#     name_id_json = json.dumps(name_id_dict)
-
-#     return name_id_json
-
-# app.run(host="0.0.0.0", port=5000)
