@@ -392,9 +392,9 @@ def visualize_boxes_and_labels_on_image_array(image,
           #THIS IS WHAT I CHANGED
           ymin, xmin, ymax, xmax = box
           part_dict = dict()
-          part_dict["name"] = class_name
+          part_dict["partID"] = class_name
           part_dict["confidence"] = int(100*scores[i])
-          part_dict["coordinated"] = [ymin, xmin, ymax, xmax]
+          part_dict["coordinates"] = [ymin, xmin, ymax, xmax]
           name_id_dict.append(part_dict)
           #name_id_dict[class_name]=[int(100*scores[i]), ymin, xmin, ymax, xmax]
         else:

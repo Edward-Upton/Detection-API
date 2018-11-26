@@ -3,6 +3,7 @@ import flask
 import re
 import numpy as np
 from flask import request, make_response
+import requests
 import string
 import json
 import os
@@ -81,21 +82,30 @@ def detect():
         
     cv2.imwrite('resizing_test_cv2.png', cv_image)
 
-    
-
-    # cv2.imshow('image',cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB))
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
     image_PIL = Image.fromarray(cv_image)
-    image_PIL.show()
 
     detectedParts = object_detection_runner.detect_objects(image_PIL)
-    print(str(detectedParts))
-    if len(detectedParts) == 0:
+    detectedPartsData = []
+    i=0
+    uniqueIDArray = ["a","b","c","d","e","f","g","h","i","j","k","l","m"]
+    for brick in detectedParts:
+        headers = {"key":"8ee516adb0c216f432ae6d9d0f0101b8"}
+        brickData = requests.get("https://rebrickable.com/api/v3/lego/parts/%s/" % str(brick["partID"]), params=headers)
+        brickData = brickData.json()
+        brickDataDict = dict()
+        brickDataDict["name"] = brickData["name"]
+        brickDataDict["partID"] = brickData["part_num"]
+        brickDataDict["confidence"] = brick["confidence"]
+        brickDataDict["url"] = brickData["part_url"]
+        brickDataDict["img"] = brickData["part_img_url"]
+        brickDataDict["uniqueID"] = uniqueIDArray[i]
+        detectedPartsData.append(brickDataDict)
+        i = i + 1
+    print(str(detectedPartsData))
+    if len(detectedPartsData) == 0:
         return "No Bricks Were Detected"
     else:
-        return flask.render_template("detection.html", detectedParts = detectedParts)
+        return flask.render_template("detection.html", detectedPartsData = detectedPartsData)
 if __name__ == "__main__":
     try:
         APP.run(host="0.0.0.0", port=80, debug=DEBUG)
