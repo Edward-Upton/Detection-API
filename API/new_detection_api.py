@@ -1,14 +1,17 @@
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template
+import requests
 from werkzeug.utils import secure_filename
 from PIL import Image, ExifTags
 import cv2
 from io import StringIO, BytesIO
 import numpy as np
 import base64
+import object_detection_runner
 UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
+DEBUG = False
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -88,14 +91,32 @@ def uploaded_image():
     if file and allowed_file(file.filename):
         image_PIL = Image.open(file.stream)
         image_PIL = processImage(image_PIL)
+        detectedParts = object_detection_runner.detect_objects(image_PIL)
+        detectedPartsData = []
         img_io = BytesIO()
         image_PIL.save(img_io, 'JPEG')
         img_io.seek(0)
         img_base64 = str(base64.b64encode(img_io.getvalue()))
         img_str = img_base64[2:len(img_base64)-1]
         imageBase64_str = "data:image/jpeg;base64,{}".format(img_str)
-        return render_template('uploaded_image.html', imageBase64=imageBase64_str)
+
+        for brick in detectedParts:
+            headers = {"key":"8ee516adb0c216f432ae6d9d0f0101b8"}
+            brickData = requests.get("https://rebrickable.com/api/v3/lego/parts/%s/" % str(brick["partID"]), params=headers)
+            brickData = brickData.json()
+            brickDataDict = dict()
+            brickDataDict["name"] = brickData["name"]
+            brickDataDict["partID"] = brickData["part_num"]
+            brickDataDict["confidence"] = brick["confidence"]
+            brickDataDict["url"] = brickData["part_url"]
+            brickDataDict["img"] = brickData["part_img_url"]
+            brickDataDict["uniqueID"] = brick["uniqueID"]
+            detectedPartsData.append(brickDataDict)
+        if len(detectedPartsData) == 0:
+            return "No Bricks Were Detected"
+        else:
+            return render_template("detection.html", uploadedImgStrBase64=imageBase64_str, detectedPartsData = detectedPartsData)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=80, debug=DEBUG)

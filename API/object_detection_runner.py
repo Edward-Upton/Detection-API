@@ -27,7 +27,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 MINIMUM_CONFIDENCE = 0.1
 IMAGE_RESOLUTION = [300,300]
 
-PATH_TO_MODEL_DIR = 'C:/Users/edupt/Documents/GitHub/Detection-API/API/models/ssd_inception_v2_coco/91373-08.11.18/output_inference_graph'
+PATH_TO_MODEL_DIR = 'C:/Users/edupt/Documents/GitHub/Detection-API/API/models/ssd_inception_v2_coco/58916-27.11.18/output_inference_graph'
 
 PATH_TO_LABELS = os.path.join(PATH_TO_MODEL_DIR, 'label_map.pbtxt')
 

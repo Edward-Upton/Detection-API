@@ -36,20 +36,17 @@
 </head>
 
 <body>
-    <div class="container-fluid rounded" style="padding: 10px; background-color: rgb(0, 76, 76); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
+    <div class="container-fluid" style="padding: 10px; background-color: rgb(0, 76, 76); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
         <form id="imageUploadForm" method="POST" enctype="multipart/form-data" action="uploaded_image">
-            <input class="custom-file-input" id="imageUploadFile" type="file" name="file" accept="image/*" capture>
+            <label class="btn btn-outline-light btn-file">
+                Upload/Take Picture for Scanning
+                <input id="imageUploadFile" style="display: none;" type="file" name="file" accept="image/*" capture>
+            </label>
         </form>
-        <script language="JavaScript" type="text/javascript">
-            function HandleBrowseClick() {
-                var fileinput = document.getElementById("browse");
-                fileinput.click();
-            }
-            function Handlechange() {
-                var fileinput = document.getElementById("browse");
-                var textinput = document.getElementById("filename");
-                textinput.value = fileinput.value;
-            }
+        <script>
+            document.getElementById("imageUploadFile").onchange = function () {
+                document.getElementById("imageUploadForm").submit();
+            };
         </script>
     </div>
     <div>

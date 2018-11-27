@@ -365,6 +365,7 @@ def visualize_boxes_and_labels_on_image_array(image,
   # Create a display string (and color) for every box location, group any boxes
   # that correspond to the same location.
   name_id_dict = []
+  uniqueID = 0
   box_to_display_str_map = collections.defaultdict(list)
   box_to_color_map = collections.defaultdict(str)
   box_to_instance_masks_map = {}
@@ -392,10 +393,12 @@ def visualize_boxes_and_labels_on_image_array(image,
           #THIS IS WHAT I CHANGED
           ymin, xmin, ymax, xmax = box
           part_dict = dict()
+          part_dict["uniqueID"] = str(uniqueID)
           part_dict["partID"] = class_name
           part_dict["confidence"] = int(100*scores[i])
           part_dict["coordinates"] = [ymin, xmin, ymax, xmax]
           name_id_dict.append(part_dict)
+          uniqueID = uniqueID + 1
           #name_id_dict[class_name]=[int(100*scores[i]), ymin, xmin, ymax, xmax]
         else:
           display_str = 'score: {}%'.format(int(100 * scores[i]))
