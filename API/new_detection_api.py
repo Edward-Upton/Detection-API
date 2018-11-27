@@ -48,8 +48,6 @@ def processImage(imagePIL):
         ycrop_min = int(abs(IMAGE_RESOLUTION[0] - cv_image.shape[0]) / 2)
         ycrop_max = int(cv_image.shape[0] - (abs(IMAGE_RESOLUTION[0] - cv_image.shape[0]) / 2))
 
-        print("Y", ycrop_min, ycrop_max)
-
         cv_image = cv_image[ycrop_min:ycrop_max, : , :]
 
     elif width_diff > height_diff:
@@ -62,8 +60,6 @@ def processImage(imagePIL):
         xcrop_min = int(abs(IMAGE_RESOLUTION[1] - cv_image.shape[1]) / 2)
         xcrop_max = int(cv_image.shape[1] - (abs(IMAGE_RESOLUTION[1] - cv_image.shape[1]) / 2))
 
-        print("X", xcrop_min, xcrop_max)
-
         cv_image = cv_image[ : , xcrop_min:xcrop_max, :]
 
     return Image.fromarray(cv_image)
@@ -71,6 +67,10 @@ def processImage(imagePIL):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    return render_template("home.html")
 
 @app.route('/image_upload', methods=['GET', 'POST'])
 def image_upload():
@@ -93,7 +93,6 @@ def uploaded_image():
         img_io.seek(0)
         img_base64 = str(base64.b64encode(img_io.getvalue()))
         img_str = img_base64[2:len(img_base64)-1]
-        print(img_str)
         imageBase64_str = "data:image/jpeg;base64,{}".format(img_str)
         return render_template('uploaded_image.html', imageBase64=imageBase64_str)
 

@@ -36,9 +36,15 @@
 </head>
 
 <body>
-<div>
-    <img src="{{ imageBase64 }}">
-</div>
-</body>
+    <div class="container-fluid rounded" style="padding: 10px; background-color: rgb(0, 102, 102); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
+        <img src="/static/files/BrickIDLOGOv2ResizedMedium.png" style="max-width:200px; height:auto; display: block; margin: auto; padding: 5px">
+    </div>
+    <div class="container-fluid rounded" style="padding: 10px; background-color: rgb(0, 76,76); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
+        <form method="GET" action="/image_upload">
+            <button type="submit" class="btn btn-outline-light" style="margin-left:2%; margin-right:2%; width:96%">
+                Click Here To Identify A Brick
+            </button>
+        </form>
+    </div>
 
 </html>
