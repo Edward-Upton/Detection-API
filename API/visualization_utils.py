@@ -366,6 +366,7 @@ def visualize_boxes_and_labels_on_image_array(image,
   # that correspond to the same location.
   name_id_dict = []
   uniqueID = 0
+  uniqueIDArray = ["a","b","c","d","e","f","g","h","i","j","k","l","m"]
   box_to_display_str_map = collections.defaultdict(list)
   box_to_color_map = collections.defaultdict(str)
   box_to_instance_masks_map = {}
@@ -393,7 +394,7 @@ def visualize_boxes_and_labels_on_image_array(image,
           #THIS IS WHAT I CHANGED
           ymin, xmin, ymax, xmax = box
           part_dict = dict()
-          part_dict["uniqueID"] = str(uniqueID)
+          part_dict["uniqueID"] = uniqueIDArray[i]
           part_dict["partID"] = class_name
           part_dict["confidence"] = int(100*scores[i])
           part_dict["coordinates"] = [ymin, xmin, ymax, xmax]

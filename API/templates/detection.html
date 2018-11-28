@@ -36,12 +36,13 @@
 </head>
 
 <body>
-    <div class="container-fluid" style="padding: 10px; background-color: rgb(0, 76, 76); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
+    <div class="container-fluid" style="padding: 5px; background-color: rgb(0, 76, 76); border-radius: 15px; margin-left:3%; margin-right:3%; width:94%">
         <h1 style="color: white; text-align: center">Detected Bricks</h1>
-        <img src="{{ uploadedImgStrBase64 }}">
+        <div class="container-fluid" style="padding: 5px; width: 98%; height: 30%; margin-left:1%; margin-right:1%;">
+            <img src="{{ uploadedImgStrBase64 }}" style="display: block; margin-left: auto; margin-right: auto; max-height: 100%; max-width: 100%">
+        </div>
         {% for brick in detectedPartsData %}
         {% set confidence = brick.confidence | int %}
-        {% if confidence >= 50 %}
         <div class="alert alert-info" style="padding: 10px;">
             <div class="wrapper">
                 <button class="btn btn-outline-info" data-toggle="collapse" data-target="#{{ brick.uniqueID }}">{{
@@ -49,12 +50,13 @@
                 <div class="collapse" id="{{ brick.uniqueID }}">
                     <p>Confidence: <strong>{{ brick.confidence }}%</strong></p>
                     <p>Part ID: <strong>{{ brick.partID }}</strong></p>
-                    <p>Rebrickable Link: <a href="{{ brick.url }}"><strong>{{ brick.url }}</strong></a></p>
-                    <img src="{{ brick.img }}">
+                    <p>Rebrickable Link: <a href="{{ brick.url }}"><strong><i>{{ brick.partId }}</i></strong></a></p>
+                    <div class="container-fluid" style="padding: 2px; width: 98%; margin-left: 1%; margin-right: 1%">
+                        <img src="{{ brick.img }}" style="display: block; margin-left: auto; margin-right: auto; width: 100%">
+                    </div>
                 </div>
             </div>
         </div>
-        {% endif %}
         {% endfor %}
         <form method="GET" action="/">
             <div>

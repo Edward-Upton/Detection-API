@@ -112,10 +112,8 @@ def uploaded_image():
             brickDataDict["img"] = brickData["part_img_url"]
             brickDataDict["uniqueID"] = brick["uniqueID"]
             detectedPartsData.append(brickDataDict)
-        if len(detectedPartsData) == 0:
-            return "No Bricks Were Detected"
-        else:
-            return render_template("detection.html", uploadedImgStrBase64=imageBase64_str, detectedPartsData = detectedPartsData)
+
+        return render_template("detection.html", uploadedImgStrBase64=imageBase64_str, detectedPartsData = detectedPartsData)
 
 
 if __name__ == "__main__":
