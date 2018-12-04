@@ -48,21 +48,32 @@
                 <button class="btn btn-outline-info" data-toggle="collapse" data-target="#{{ brick.uniqueID }}">{{
                     brick.name }}</button>
                 <div class="collapse" id="{{ brick.uniqueID }}">
-                    <p>Confidence: <strong>{{ brick.confidence }}%</strong></p>
-                    <p>Part ID: <strong>{{ brick.partID }}</strong></p>
-                    <p>Rebrickable Link: <a href="{{ brick.url }}"><strong><i>{{ brick.partId }}</i></strong></a></p>
-                    <div class="container-fluid" style="padding: 2px; width: 98%; margin-left: 1%; margin-right: 1%">
-                        <img src="{{ brick.img }}" style="display: block; margin-left: auto; margin-right: auto; width: 100%">
+                    <div style="width: 48%; margin-left: 1%; margin-right: 1%; float: left">
+                        <p>Confidence: <strong>{{ brick.confidence }}%</strong></p>
+                        <p>Part ID: <strong>{{ brick.partID }}</strong></p>
+                        <a href="{{ brick.url }}"><strong><i>Rebrickable Link</i></strong></a>
                     </div>
+                    <div class="container-fluid" style="width: 48%; margin-left: 1%; margin-right: 1%; float: right">
+                        <img src="{{ brick.img }}" style="max-height: 40%; display: block; margin-left: auto; margin-right: auto; width: 100%">
+                    </div>
+                    <div class="spacer" style="clear: both;"></div>
                 </div>
             </div>
         </div>
         {% endfor %}
-        <form method="GET" action="/">
-            <div>
-                <button class="btn btn-outline-secondary" type="submit">Click Once Done</button>
-            </div>
-        </form>
+        <div style="text-align: center">
+            <form method="GET" action="/image_upload" style="display: inline-block">
+                <div>
+                    <button class="btn btn-outline-light" type="submit" style="margin: auto">Scan Another</button>
+                </div>
+            </form>
+            <form method="GET" action="/" style="display: inline-block">
+                <div>
+                    <button class="btn btn-outline-secondary" type="submit" style="margin: auto">Home</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

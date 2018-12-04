@@ -2,7 +2,7 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template
 import requests
 from werkzeug.utils import secure_filename
-from PIL import Image, ExifTags
+from PIL import Image, ExifTags, ImageDraw
 import cv2
 from io import StringIO, BytesIO
 import numpy as np
@@ -75,6 +75,10 @@ def allowed_file(filename):
 def home():
     return render_template("home.html")
 
+@app.route('/info', methods=['GET'])
+def info():
+    return render_template("info.html")
+
 @app.route('/image_upload', methods=['GET', 'POST'])
 def image_upload():
     return render_template("image_upload.html")
@@ -92,6 +96,12 @@ def uploaded_image():
         image_PIL = Image.open(file.stream)
         image_PIL = processImage(image_PIL)
         detectedParts = object_detection_runner.detect_objects(image_PIL)
+        # image_draw = ImageDraw.Draw(image_PIL)
+        # for brick in detectedParts:
+        #     coordinates = brick["coordinates"]
+        #     rel_coordinates = [i * 300 for i in coordinates]
+        #     rounded_rel_coordinates = [round(x) for x in rel_coordinates]
+        #     image_draw.rectangle(rounded_rel_coordinates, outline="white")
         detectedPartsData = []
         img_io = BytesIO()
         image_PIL.save(img_io, 'JPEG')

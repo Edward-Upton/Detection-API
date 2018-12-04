@@ -1,5 +1,6 @@
-import requests
-headers = {"key":"8ee516adb0c216f432ae6d9d0f0101b8"}
-brickData = requests.get("https://rebrickable.com/api/v3/lego/parts/3001/", params=headers)
-print(brickData.json())
-print(type(brickData.json()))
+from PIL import Image, ImageDraw
+
+imagePIL = Image.open("API/Brick2x4Normal.jpg")
+image_draw = ImageDraw.Draw(imagePIL)
+image_draw.rectangle([45,150,70,200], outline="white")
+imagePIL.show()

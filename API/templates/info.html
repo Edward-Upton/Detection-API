@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Charities Day</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl"
+        crossorigin="anonymous"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/files/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/static/files/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/files/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/files/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/files/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/files/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/files/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/files/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/files/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/files/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/files/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/files/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/files/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/static/files/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/static/files/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+</head>
+
+<body>
+    <div class="container-fluid" style="padding: 10px; background-color: rgb(0, 76, 76); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
+        <h2 style="text-align: center; color: white">How the LEGO Identifier Was Made</h2>
+        <p style="color: white">The overall system uses Deep Learning Object Detection with TensorFlows Machine Learning library.</p>
+        <img src="/static/files/TensorFlowLogo.jpeg" style="max-width: 100%">
+        <h4 style="color: white; text-decoration: underline">Training</h4>
+        <p style="color: white">The first step was to train a model to be able to detect different LEGO bricks.
+        I first tried manually taking photos, labelling them and then training the model with them. This was fine for the initial
+        test but it was soon clear that it wouldn't be a viable solution to the training. I looked into how I could automatically
+        generate images of LEGO parts and label them. I have used LEGO Digital Designers before and BrickLink had recently launched
+        their own one called "Stud.io". I installed it and rendered a couple of parts on the software. After some digging, I noticed
+        that for a brief period of time a .povray file was being created in one of the softwares directories. Turns out that this
+        software uses an open source, ray-tracing rendering program called POV-RAY and open source 3D designs for this software of
+        most LEGO part designs. This led me to develop my own .povray code to render bricks. Using Python, I am able to create unlimited
+        amount of random coloured, positioned, lighting options and background patterns that I want to train with.</h5>
+        <img src="/static/files/TrainingImagesCollage.png" style="max-width: 100%">
+        <p style="color: white">The next step is to train an object detection model with these images but training requires all images 
+        to be labelled with the coordinates in that image where the part is and what the ID of that part is. It was easy as getting POV-RAY
+        to output the equivalent positions of the brick on the image and find the max and min of those points. So back to training. 
+        TensorFlow and other third parties have pretrained models that have been trained on huge databases of general images and allows
+        developers to train to their specific needs on the last layer of the model. This cuts down training time greatly as the models already
+        have basic knowledge of edges, shapes and colours. I use CUDA drivers and TensorFlow-GPU to run the training on my graphics card to 
+        make it run faster. It takes about 30 hours to train to where the error gets to it's lowest value and then the model can only be imporved
+        by feeding it more examples.</p>
+        <h4 style="color: white; text-decoration: underline">Detection</h4>
+        <p style="color: white">To actually use the model that I have trained, I must develop an API that can act as a web server, 
+        to take incoming requests, put them into the model and return the outcome. I use Python and Flask to create this webserver. The user
+        is able to select or take a picture to be scanned, which is then uploaded to the API, put through the model and then sends back the
+        brick or bricks that it has detected with the ID, name, link to get more details online and a preview picture to confirm it.</p>
+    </div>
+</body>
+
+</html>
