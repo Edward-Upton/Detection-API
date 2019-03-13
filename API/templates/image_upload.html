@@ -10,6 +10,7 @@
         crossorigin="anonymous"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
         crossorigin="anonymous">
+    <link href="/static/css/personal.css" rel="stylesheet">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" integrity="sha384-pjaaA8dDz/5BgdFUPX6M/9SUZv4d12SUPF0axWc+VRZkx5xU3daN+lYb49+Ax+Tl"
@@ -37,34 +38,36 @@
 
 <body>
     <div class="container-fluid" style="padding: 10px; background-color: rgb(0, 76, 76); border-radius: 15px; margin-left:2%; margin-right:2%; width:96%">
+        <div id="uploadDiv">
+            <div class="container-fluid" style="padding: 10px; margin-left:0%; margin-right:0%; width:100%">
+                <h2 style="text-align: center; color: white">Taking A Picture</h2>
+                <img src="/static/files/CropExplainedImg.png" style="max-width:200px; height:auto; display: block; margin: auto; padding: 5px">
+                <h5 style="text-align: center; color: white">Ensure that the brick is in the center of the image so
+                    that it
+                    can be cropped to a square.</h5>
+                <h5 style="text-align: center; color: white">Take the picture at 45° to the Brick.</h5>
+            </div>
+            <form id="imageUploadForm" method="POST" enctype="multipart/form-data" style="padding-bottom: 5px;" action="uploaded_image">
+                <label class="btn btn-outline-light btn-file" style="width: 100%; height: 100%; margin: auto; text-align: center;">
+                    Upload/Take Picture for Scanning
+                    <input id="imageUploadFile" style="display: none; text-align: center; margin: auto;" type="file"
+                        name="file" accept="image/*" capture>
+                </label>
+            </form>
+        </div>
+        <div id="loadingDiv" style="display: none; padding: 5px;">
+            <h2 style="color: white; text-align: center;">Scanning Picture</h2>
+        </div>
 
-        <div class="container-fluid" style="padding: 10px; margin-left:0%; margin-right:0%; width:100%">
-            <h2 style="text-align: center; color: white">Taking A Picture</h2>
-            <img src="/static/files/CropExplainedImg.png" style="max-width:200px; height:auto; display: block; margin: auto; padding: 5px">
-            <h5 style="text-align: center; color: white">Ensure that the brick is in the center of the image so that it
-                can be cropped to a square.</h5>
-            <h5 style="text-align: center; color: white">Take the picture at 45° to the Brick.</h5>
-        </div>
-        <form id="imageUploadForm" method="POST" enctype="multipart/form-data" action="uploaded_image">
-            <label class="btn btn-outline-light btn-file" style="width: 100%; height: 100%; margin: auto; text-align: center;">
-                Upload/Take Picture for Scanning
-                <input id="imageUploadFile" style="display: none; text-align: center; margin: auto;" type="file" name="file"
-                    accept="image/*" capture>
-            </label>
-        </form>
-        <div id="loadingDiv" style="display: none; padding: 5px; text-align: center">
-            <img id="loadingGif" src="/static/files/loading.gif" style="margin:auto; width: 30px; height: 30px; padding: 2px;">
-            <label id="loadingLabel" style="color: white; margin: auto;">Scanning Picture</label>
-        </div>
         <script>
             document.getElementById("imageUploadFile").onchange = function () {
                 document.getElementById("loadingDiv").style.display = "inline-block";
+                document.getElementById("uploadDiv").style.display = "none";
                 document.getElementById("imageUploadForm").submit();
             };
         </script>
 
     </div>
-    <div>
 
 
 </body>

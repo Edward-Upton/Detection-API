@@ -96,15 +96,15 @@ def uploaded_image():
         image_PIL = Image.open(file.stream)
         image_PIL = processImage(image_PIL)
         detectedParts = object_detection_runner.detect_objects(image_PIL)
-        image_draw = ImageDraw.Draw(image_PIL)
-        i = 0
-        for brick in detectedParts:
-            if brick["confidence"] > 40:
-                coordinates = brick["coordinates"]
-                rel_coordinates = [i * 300 for i in coordinates]
-                rounded_rel_coordinates = [round(x) for x in rel_coordinates]
-                image_draw.rectangle(rounded_rel_coordinates, outline=COLOUR_NAMES[i])
-                i = i + 1
+        # image_draw = ImageDraw.Draw(image_PIL)
+        # i = 0
+        # for brick in detectedParts:
+        #     if brick["confidence"] > 40:
+        #         coordinates = brick["coordinates"]
+        #         rel_coordinates = [i * 300 for i in coordinates]
+        #         rounded_rel_coordinates = [round(x) for x in rel_coordinates]
+        #         image_draw.rectangle(rounded_rel_coordinates, outline=COLOUR_NAMES[i])
+        #         i = i + 1
 
         detectedPartsData = []
         img_io = BytesIO()
